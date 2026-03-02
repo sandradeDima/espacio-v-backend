@@ -42,6 +42,7 @@ exports.deleteReporte = deleteReporte;
 exports.getReportesByDateRange = getReportesByDateRange;
 exports.createReporteCompleto = createReporteCompleto;
 exports.generarDocumento = generarDocumento;
+const params_1 = require("./params");
 const ReportesService = __importStar(require("../services/reportes.service"));
 const logger_1 = require("../config/logger");
 async function getAllReportes(req, res) {
@@ -49,12 +50,12 @@ async function getAllReportes(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function getReporteById(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ReportesService.getReporteById(id);
     res.status(mensaje.code).json(mensaje);
 }
 async function getReportesByCliente(req, res) {
-    const clienteId = parseInt(req.params.clienteId);
+    const clienteId = (0, params_1.getParamInt)(req.params.clienteId);
     const mensaje = await ReportesService.getReportesByCliente(clienteId);
     res.status(mensaje.code).json(mensaje);
 }
@@ -66,13 +67,13 @@ async function createReporte(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function updateReporte(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const { clienteId, coloracion, formula, observaciones, precio, idReporte } = req.body;
     const mensaje = await ReportesService.updateReporte(id, clienteId, coloracion, formula, observaciones, precio);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteReporte(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ReportesService.deleteReporte(id);
     res.status(mensaje.code).json(mensaje);
 }

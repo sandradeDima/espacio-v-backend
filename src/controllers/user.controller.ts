@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getParamString } from './params';
 import * as UserService from '../services/user.sevice';
 
 export async function getUserById(req: Request, res: Response) {
@@ -9,7 +10,7 @@ export async function getUserById(req: Request, res: Response) {
 
 export async function getUserByEmail(req: Request, res: Response) {
     const { email } = req.params;
-    const mensaje = await UserService.getUserByEmail(email!);
+    const mensaje = await UserService.getUserByEmail(getParamString(email));
     res.status(mensaje.code).json(mensaje);
 }
 

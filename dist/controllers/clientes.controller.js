@@ -40,13 +40,14 @@ exports.updateCliente = updateCliente;
 exports.deleteCliente = deleteCliente;
 exports.searchClientes = searchClientes;
 exports.searchClientesPagination = searchClientesPagination;
+const params_1 = require("./params");
 const ClientesService = __importStar(require("../services/clientes.service"));
 async function getAllClientes(req, res) {
     const mensaje = await ClientesService.getAllClientes();
     res.status(mensaje.code).json(mensaje);
 }
 async function getClienteById(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ClientesService.getClienteById(id);
     res.status(mensaje.code).json(mensaje);
 }
@@ -56,13 +57,13 @@ async function createCliente(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function updateCliente(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const { nombre, email, telefono } = req.body;
     const mensaje = await ClientesService.updateCliente(id, nombre, email, telefono);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteCliente(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ClientesService.deleteCliente(id);
     res.status(mensaje.code).json(mensaje);
 }

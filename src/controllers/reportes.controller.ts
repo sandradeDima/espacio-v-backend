@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getParamInt } from './params';
 import type { Express } from 'express';
 import * as ReportesService from '../services/reportes.service';
 import { logger } from '../config/logger';
@@ -9,13 +10,13 @@ export async function getAllReportes(req: Request, res: Response) {
 }
 
 export async function getReporteById(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const mensaje = await ReportesService.getReporteById(id);
     res.status(mensaje.code).json(mensaje);
 }
 
 export async function getReportesByCliente(req: Request, res: Response) {
-    const clienteId = parseInt(req.params.clienteId);
+    const clienteId = getParamInt(req.params.clienteId);
     const mensaje = await ReportesService.getReportesByCliente(clienteId);
     res.status(mensaje.code).json(mensaje);
 }
@@ -37,7 +38,7 @@ export async function createReporte(req: Request, res: Response) {
 }
 
 export async function updateReporte(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const { clienteId, coloracion, formula, observaciones, precio,idReporte } = req.body;
     const mensaje = await ReportesService.updateReporte(
         id,
@@ -51,7 +52,7 @@ export async function updateReporte(req: Request, res: Response) {
 }
 
 export async function deleteReporte(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const mensaje = await ReportesService.deleteReporte(id);
     res.status(mensaje.code).json(mensaje);
 }

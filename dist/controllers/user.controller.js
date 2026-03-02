@@ -38,6 +38,7 @@ exports.getUserByEmail = getUserByEmail;
 exports.updateUser = updateUser;
 exports.createUser = createUser;
 exports.searchUsersPagination = searchUsersPagination;
+const params_1 = require("./params");
 const UserService = __importStar(require("../services/user.sevice"));
 async function getUserById(req, res) {
     const { id } = req.params;
@@ -46,7 +47,7 @@ async function getUserById(req, res) {
 }
 async function getUserByEmail(req, res) {
     const { email } = req.params;
-    const mensaje = await UserService.getUserByEmail(email);
+    const mensaje = await UserService.getUserByEmail((0, params_1.getParamString)(email));
     res.status(mensaje.code).json(mensaje);
 }
 async function updateUser(req, res) {

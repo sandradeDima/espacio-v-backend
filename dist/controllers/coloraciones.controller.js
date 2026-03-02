@@ -39,6 +39,7 @@ exports.createColoracion = createColoracion;
 exports.updateColoracion = updateColoracion;
 exports.deleteColoracion = deleteColoracion;
 exports.searchColoraciones = searchColoraciones;
+const params_1 = require("./params");
 const ColoracionesService = __importStar(require("../services/coloraciones.service"));
 const logger_1 = require("../config/logger");
 async function getAllColoraciones(req, res) {
@@ -46,7 +47,7 @@ async function getAllColoraciones(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function getColoracionById(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ColoracionesService.getColoracionById(id);
     res.status(mensaje.code).json(mensaje);
 }
@@ -56,13 +57,13 @@ async function createColoracion(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function updateColoracion(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const { nombre, descripcion } = req.body;
     const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteColoracion(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await ColoracionesService.deleteColoracion(id);
     res.status(mensaje.code).json(mensaje);
 }

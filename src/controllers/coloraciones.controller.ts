@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getParamInt } from './params';
 import * as ColoracionesService from '../services/coloraciones.service';
 import { logger } from '../config/logger';
 
@@ -8,7 +9,7 @@ export async function getAllColoraciones(req: Request, res: Response) {
 }
 
 export async function getColoracionById(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const mensaje = await ColoracionesService.getColoracionById(id);
     res.status(mensaje.code).json(mensaje);
 }
@@ -20,14 +21,14 @@ export async function createColoracion(req: Request, res: Response) {
 }
 
 export async function updateColoracion(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const { nombre, descripcion } = req.body;
     const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion);
     res.status(mensaje.code).json(mensaje);
 }
 
 export async function deleteColoracion(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
+    const id = getParamInt(req.params.id);
     const mensaje = await ColoracionesService.deleteColoracion(id);
     res.status(mensaje.code).json(mensaje);
 }

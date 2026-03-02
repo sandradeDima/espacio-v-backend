@@ -40,18 +40,19 @@ exports.createFotoReporte = createFotoReporte;
 exports.updateFotoReporte = updateFotoReporte;
 exports.deleteFotoReporte = deleteFotoReporte;
 exports.deleteFotosByReporte = deleteFotosByReporte;
+const params_1 = require("./params");
 const FotosReportesService = __importStar(require("../services/fotosReportes.service"));
 async function getAllFotosReportes(req, res) {
     const mensaje = await FotosReportesService.getAllFotosReportes();
     res.status(mensaje.code).json(mensaje);
 }
 async function getFotoReporteById(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await FotosReportesService.getFotoReporteById(id);
     res.status(mensaje.code).json(mensaje);
 }
 async function getFotosByReporte(req, res) {
-    const reporteId = parseInt(req.params.reporteId);
+    const reporteId = (0, params_1.getParamInt)(req.params.reporteId);
     const mensaje = await FotosReportesService.getFotosByReporte(reporteId);
     res.status(mensaje.code).json(mensaje);
 }
@@ -61,18 +62,18 @@ async function createFotoReporte(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function updateFotoReporte(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const { reporteId, filename } = req.body;
     const mensaje = await FotosReportesService.updateFotoReporte(id, reporteId, filename);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteFotoReporte(req, res) {
-    const id = parseInt(req.params.id);
+    const id = (0, params_1.getParamInt)(req.params.id);
     const mensaje = await FotosReportesService.deleteFotoReporte(id);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteFotosByReporte(req, res) {
-    const reporteId = parseInt(req.params.reporteId);
+    const reporteId = (0, params_1.getParamInt)(req.params.reporteId);
     const mensaje = await FotosReportesService.deleteFotosByReporte(reporteId);
     res.status(mensaje.code).json(mensaje);
 }
