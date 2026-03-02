@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_1 = require("../middlewares/validate");
+const reportes_schema_1 = require("../schemas/reportes.schema");
+const reportes_controller_1 = require("../controllers/reportes.controller");
+const upload_1 = require("../middlewares/upload");
+const router = (0, express_1.Router)();
+router.get('/', reportes_controller_1.getAllReportes);
+router.get('/date-range', reportes_controller_1.getReportesByDateRange);
+router.get('/cliente/:clienteId', reportes_controller_1.getReportesByCliente);
+router.get('/:id', reportes_controller_1.getReporteById);
+router.post('/', (0, validate_1.validate)(reportes_schema_1.createReporteSchema), reportes_controller_1.createReporte);
+router.post('/completo', upload_1.uploadImages.array('fotos'), reportes_controller_1.createReporteCompleto);
+router.put('/:id', (0, validate_1.validate)(reportes_schema_1.updateReporteSchema), reportes_controller_1.updateReporte);
+router.delete('/:id', reportes_controller_1.deleteReporte);
+router.post('/generarDocumento', (0, validate_1.validate)(reportes_schema_1.generarDocumentoSchema), reportes_controller_1.generarDocumento);
+exports.default = router;

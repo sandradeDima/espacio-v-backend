@@ -4,7 +4,7 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2';
 export type Cliente = {
     id: number;
     nombre: string;
-    email: string;
+    email: string | null;
     telefono: string;
     createdAt: Date;
     updatedAt: Date;
@@ -33,7 +33,7 @@ export async function findByEmail(email: string): Promise<Cliente | null> {
     return rows[0] ?? null;
 }
 
-export async function create(nombre: string, email: string, telefono: string): Promise<Cliente> {
+export async function create(nombre: string, email: string | null, telefono: string): Promise<Cliente> {
     const [result] = await pool.execute<ResultSetHeader>(
         'INSERT INTO clientes (nombre, email, telefono) VALUES (?, ?, ?)',
         [nombre, email, telefono]
@@ -43,7 +43,7 @@ export async function create(nombre: string, email: string, telefono: string): P
     return cliente;
 }
 
-export async function update(id: number, nombre: string, email: string, telefono: string): Promise<Cliente | null> {
+export async function update(id: number, nombre: string, email: string | null, telefono: string): Promise<Cliente | null> {
     const [result] = await pool.execute<ResultSetHeader>(
         'UPDATE clientes SET nombre = ?, email = ?, telefono = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
         [nombre, email, telefono, id]
@@ -76,7 +76,7 @@ export async function searchPagination(
   clientPhone?: string,
   sortField?: string,
   sortOrder?: string,
-): Promise<Cliente[]> {
+): Promise<{ clientes: Cliente[]; total: number }> {
   const safePage = Math.max(1, page | 0);
   const safeSize = Math.max(1, size | 0);
   const offset = (safePage - 1) * safeSize;
@@ -89,37 +89,40 @@ export async function searchPagination(
   const phone = clientPhone?.trim();
 
   if (name) {
-    console.log("name",name);
     clauses.push('nombre LIKE ?');
     params.push(`%${name}%`);
   }
   if (email) {
-    console.log("email",email);
     clauses.push('email LIKE ?');
     params.push(`%${email}%`);
   }
   if (phone) {
-    console.log("phone",phone);
     clauses.push('telefono LIKE ?');
     params.push(`%${phone}%`);
   }
 
-  let query =
+  let baseQuery =
     'SELECT id, nombre, email, telefono, created_at AS createdAt, updated_at AS updatedAt FROM clientes';
+  let countQuery = 'SELECT COUNT(*) AS total FROM clientes';
 
   if (clauses.length) {
-    query += ' WHERE ' + clauses.join(' OR ');
+    const whereClause = ' WHERE ' + clauses.join(' OR ');
+    baseQuery += whereClause;
+    countQuery += whereClause;
   }
-  if(sortField && sortOrder){
-    query += ` ORDER BY ${sortField} ${sortOrder}`;
-  }else{
-    query += ` ORDER BY id`;
-  }
-  // 👇 Interpolate already-sanitized numbers
-  query += ` LIMIT ${safeSize} OFFSET ${offset}`;
 
-  console.log(query, params);
-  const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(query, params);
-  return rows;
+  const allowedSortFields = new Set(['id', 'nombre', 'created_at']);
+  const safeSortField = sortField && allowedSortFields.has(sortField) ? sortField : 'id';
+  const safeSortOrder = sortOrder?.toLowerCase() === 'desc' ? 'DESC' : 'ASC';
+
+  const paginatedQuery = `${baseQuery} ORDER BY ${safeSortField} ${safeSortOrder} LIMIT ${safeSize} OFFSET ${offset}`;
+
+  const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(paginatedQuery, params);
+  const [countRows] = await pool.execute<RowDataPacket[]>(countQuery, params);
+  const total = Number(countRows[0]?.total ?? 0);
+
+  return {
+    clientes: rows,
+    total,
+  };
 }
-

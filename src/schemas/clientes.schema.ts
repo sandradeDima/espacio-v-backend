@@ -1,15 +1,25 @@
 import { z } from 'zod';
 
 export const createClienteSchema = z.object({
-    nombre: z.string().min(1, 'El nombre es requerido').max(255),
-    email: z.string().email('Email inválido').max(255),
-    telefono: z.string().min(1, 'El teléfono es requerido').max(255)
+    nombre: z.string().trim().min(1, 'El nombre es requerido').max(255),
+    email: z.union([z.string().trim().email('Email inválido').max(255), z.literal(''), z.null()]).optional(),
+    telefono: z
+      .string()
+      .trim()
+      .min(1, 'El teléfono es requerido')
+      .max(255)
+      .regex(/^\d+$/, 'El teléfono solo debe contener números')
 });
 
 export const updateClienteSchema = z.object({
-    nombre: z.string().min(1, 'El nombre es requerido').max(255),
-    email: z.string().email('Email inválido').max(255),
-    telefono: z.string().min(1, 'El teléfono es requerido').max(255)
+    nombre: z.string().trim().min(1, 'El nombre es requerido').max(255),
+    email: z.union([z.string().trim().email('Email inválido').max(255), z.literal(''), z.null()]).optional(),
+    telefono: z
+      .string()
+      .trim()
+      .min(1, 'El teléfono es requerido')
+      .max(255)
+      .regex(/^\d+$/, 'El teléfono solo debe contener números')
 });
 
 export type CreateClienteDTO = z.infer<typeof createClienteSchema>;

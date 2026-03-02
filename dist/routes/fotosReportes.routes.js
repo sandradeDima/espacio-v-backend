@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_1 = require("../middlewares/validate");
+const fotosReportes_schema_1 = require("../schemas/fotosReportes.schema");
+const fotosReportes_controller_1 = require("../controllers/fotosReportes.controller");
+const router = (0, express_1.Router)();
+router.get('/', fotosReportes_controller_1.getAllFotosReportes);
+router.get('/reporte/:reporteId', fotosReportes_controller_1.getFotosByReporte);
+router.get('/:id', fotosReportes_controller_1.getFotoReporteById);
+router.post('/', (0, validate_1.validate)(fotosReportes_schema_1.createFotoReporteSchema), fotosReportes_controller_1.createFotoReporte);
+router.put('/:id', (0, validate_1.validate)(fotosReportes_schema_1.updateFotoReporteSchema), fotosReportes_controller_1.updateFotoReporte);
+router.delete('/:id', fotosReportes_controller_1.deleteFotoReporte);
+router.delete('/reporte/:reporteId', fotosReportes_controller_1.deleteFotosByReporte);
+exports.default = router;

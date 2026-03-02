@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const validate_1 = require("../middlewares/validate");
+const coloraciones_schema_1 = require("../schemas/coloraciones.schema");
+const coloraciones_controller_1 = require("../controllers/coloraciones.controller");
+const router = (0, express_1.Router)();
+router.get('/', coloraciones_controller_1.getAllColoraciones);
+router.get('/search', coloraciones_controller_1.searchColoraciones);
+router.get('/:id', coloraciones_controller_1.getColoracionById);
+router.post('/', (0, validate_1.validate)(coloraciones_schema_1.createColoracionSchema), coloraciones_controller_1.createColoracion);
+router.put('/:id', (0, validate_1.validate)(coloraciones_schema_1.updateColoracionSchema), coloraciones_controller_1.updateColoracion);
+router.delete('/:id', coloraciones_controller_1.deleteColoracion);
+exports.default = router;
