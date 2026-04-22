@@ -12,6 +12,7 @@ router.get('/cliente/:clienteId', reportes_controller_1.getReportesByCliente);
 router.get('/:id', reportes_controller_1.getReporteById);
 router.post('/', (0, validate_1.validate)(reportes_schema_1.createReporteSchema), reportes_controller_1.createReporte);
 router.post('/completo', upload_1.uploadImages.array('fotos'), reportes_controller_1.createReporteCompleto);
+router.post('/:id/fotos', upload_1.uploadImages.array('fotos'), reportes_controller_1.addFotosToReporte);
 router.put('/:id', (0, validate_1.validate)(reportes_schema_1.updateReporteSchema), reportes_controller_1.updateReporte);
 router.delete('/:id', reportes_controller_1.deleteReporte);
 router.post('/generarDocumento', (0, validate_1.validate)(reportes_schema_1.generarDocumentoSchema), reportes_controller_1.generarDocumento);

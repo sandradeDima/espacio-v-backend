@@ -79,7 +79,7 @@ export async function getReportesByCliente(clienteId: number): Promise<MensajeAp
 
 export async function createReporte(
     clienteId: number,
-    fechaServicio: Date,
+    fechaServicio: string,
     horaServicio: string,
     coloracionId: number,
     formula: string,
@@ -195,6 +195,28 @@ export async function updateReporte(
 export async function deleteReporte(id: number): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
+
+        const existingReporte = await ReportesRepo.findById(id);
+        if (!existingReporte) {
+            mensaje.code = 404;
+            mensaje.error = true;
+            mensaje.message = 'Reporte no encontrado';
+            return mensaje;
+        }
+
+        const fotos = await FotosReportesRepo.findByReporte(id);
+        await FotosReportesRepo.removeByReporte(id);
+        for (const foto of fotos) {
+            try {
+                const imagePath = path.resolve(process.cwd(), 'uploads', 'images', foto.filename);
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            } catch {
+                // Ignore file deletion errors so DB delete can still complete.
+            }
+        }
+
         const deleted = await ReportesRepo.remove(id);
         if (!deleted) {
             mensaje.code = 404;
@@ -237,7 +259,7 @@ export async function getReportesByDateRange(startDate: Date, endDate: Date): Pr
 
 export async function createReporteCompleto(
     clienteId: number,
-    fechaServicio: Date,
+    fechaServicio: string,
     horaServicio: string,
     coloracionId: number,
     formula: string,
@@ -293,6 +315,52 @@ export async function createReporteCompleto(
         mensaje.code = 500;
         mensaje.error = true;
         mensaje.message = 'Error al crear reporte completo';
+        mensaje.technicalMessage = error instanceof Error ? error.message : 'Error desconocido';
+        return mensaje;
+    }
+}
+
+export async function addFotosToReporte(
+    reporteId: number,
+    fotos: Express.Multer.File[] = []
+): Promise<MensajeApi> {
+    try {
+        const mensaje = new MensajeApi();
+
+        const reporte = await ReportesRepo.findById(reporteId);
+        if (!reporte) {
+            mensaje.code = 404;
+            mensaje.error = true;
+            mensaje.message = 'Reporte no encontrado';
+            return mensaje;
+        }
+
+        if (fotos.length === 0) {
+            mensaje.code = 400;
+            mensaje.error = true;
+            mensaje.message = 'Debe enviar al menos una foto';
+            return mensaje;
+        }
+
+        const fotosGuardadas = [];
+        for (const foto of fotos) {
+            const fotoGuardada = await FotosReportesRepo.create(reporteId, foto.filename);
+            fotosGuardadas.push(fotoGuardada);
+        }
+
+        mensaje.code = 201;
+        mensaje.error = false;
+        mensaje.message = 'Fotos agregadas correctamente';
+        mensaje.data = {
+            fotos: fotosGuardadas,
+            fotoNames: fotosGuardadas.map((foto) => foto.filename),
+        };
+        return mensaje;
+    } catch (error) {
+        const mensaje = new MensajeApi();
+        mensaje.code = 500;
+        mensaje.error = true;
+        mensaje.message = 'Error al agregar fotos al reporte';
         mensaje.technicalMessage = error instanceof Error ? error.message : 'Error desconocido';
         return mensaje;
     }

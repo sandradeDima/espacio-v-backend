@@ -2,9 +2,7 @@ import { z } from 'zod';
 
 export const createReporteSchema = z.object({
     clienteId: z.number().int().positive(),
-    fechaServicio: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: 'Fecha inválida'
-    }),
+    fechaServicio: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida (formato YYYY-MM-DD)'),
     horaServicio: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/, 'Hora inválida (formato HH:MM o HH:MM:SS)'),
     coloracionId: z.number().int().positive(),
     formula: z.string().min(1, 'La fórmula es requerida').max(255),
@@ -24,9 +22,7 @@ export const updateReporteSchema = z.object({
 
 export const createReporteCompletoSchema = z.object({
     clienteId: z.number().int().positive(),
-    fechaServicio: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: 'Fecha inválida'
-    }),
+    fechaServicio: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida (formato YYYY-MM-DD)'),
     horaServicio: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/, 'Hora inválida (formato HH:MM o HH:MM:SS)'),
     coloracionId: z.number().int().positive(),
     formula: z.string().min(1, 'La fórmula es requerida').max(255),
@@ -41,4 +37,3 @@ export const generarDocumentoSchema = z.object({
 })
 export type CreateReporteDTO = z.infer<typeof createReporteSchema>;
 export type UpdateReporteDTO = z.infer<typeof updateReporteSchema>;
-

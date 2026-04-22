@@ -4,7 +4,7 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2';
 export type Reporte = {
     id: number;
     clienteId: number;
-    fechaServicio: Date;
+    fechaServicio: string;
     horaServicio: string;
     formula: string;
     observaciones: string;
@@ -25,7 +25,7 @@ export async function findAll(): Promise<ReporteDetallado[]> {
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -49,7 +49,7 @@ export async function findById(id: number): Promise<ReporteDetallado | null> {
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -74,7 +74,7 @@ export async function findByCliente(clienteId: number): Promise<ReporteDetallado
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -97,7 +97,7 @@ export async function findByCliente(clienteId: number): Promise<ReporteDetallado
 
 export async function create(
     clienteId: number,
-    fechaServicio: Date,
+    fechaServicio: string,
     horaServicio: string,
     coloracionId: number,
     formula: string,
@@ -142,7 +142,7 @@ export async function findByDateRange(startDate: Date, endDate: Date): Promise<R
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -162,4 +162,3 @@ export async function findByDateRange(startDate: Date, endDate: Date): Promise<R
     );
     return rows;
 }
-

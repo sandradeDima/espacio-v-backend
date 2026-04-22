@@ -12,7 +12,7 @@ async function findAll() {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -33,7 +33,7 @@ async function findById(id) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -54,7 +54,7 @@ async function findByCliente(clienteId) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,
@@ -93,7 +93,7 @@ async function findByDateRange(startDate, endDate) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
-            r.fecha_servicio as fechaServicio, 
+            DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
             r.observaciones,

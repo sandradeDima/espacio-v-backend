@@ -27,7 +27,7 @@ export async function createReporte(req: Request, res: Response) {
     logger.info("fechaServicio",fechaServicio);
     const mensaje = await ReportesService.createReporte(
         clienteId,
-        new Date(fechaServicio),
+        fechaServicio,
         horaServicio,
         coloracionId,
         formula,
@@ -72,7 +72,7 @@ export async function createReporteCompleto(req: Request, res: Response) {
 
     const mensaje = await ReportesService.createReporteCompleto(
         Number(clienteId),
-        new Date(fechaServicio),
+        fechaServicio,
         horaServicio,
         Number(coloracionId),
         formula,
@@ -80,6 +80,13 @@ export async function createReporteCompleto(req: Request, res: Response) {
         Number(precio),
         fotos
     );
+    res.status(mensaje.code).json(mensaje);
+}
+
+export async function addFotosToReporte(req: Request, res: Response) {
+    const reporteId = getParamInt(req.params.id);
+    const fotos = (req.files as Express.Multer.File[] | undefined) ?? [];
+    const mensaje = await ReportesService.addFotosToReporte(reporteId, fotos);
     res.status(mensaje.code).json(mensaje);
 }
 

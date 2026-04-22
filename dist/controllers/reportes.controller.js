@@ -41,6 +41,7 @@ exports.updateReporte = updateReporte;
 exports.deleteReporte = deleteReporte;
 exports.getReportesByDateRange = getReportesByDateRange;
 exports.createReporteCompleto = createReporteCompleto;
+exports.addFotosToReporte = addFotosToReporte;
 exports.generarDocumento = generarDocumento;
 const params_1 = require("./params");
 const ReportesService = __importStar(require("../services/reportes.service"));
@@ -63,7 +64,7 @@ async function createReporte(req, res) {
     const { clienteId, fechaServicio, horaServicio, coloracionId, formula, observaciones, precio } = req.body;
     logger_1.logger.info("horaServicio", horaServicio);
     logger_1.logger.info("fechaServicio", fechaServicio);
-    const mensaje = await ReportesService.createReporte(clienteId, new Date(fechaServicio), horaServicio, coloracionId, formula, observaciones, precio);
+    const mensaje = await ReportesService.createReporte(clienteId, fechaServicio, horaServicio, coloracionId, formula, observaciones, precio);
     res.status(mensaje.code).json(mensaje);
 }
 async function updateReporte(req, res) {
@@ -85,7 +86,13 @@ async function getReportesByDateRange(req, res) {
 async function createReporteCompleto(req, res) {
     const { clienteId, fechaServicio, horaServicio, coloracionId, formula, observaciones, precio } = req.body;
     const fotos = req.files ?? [];
-    const mensaje = await ReportesService.createReporteCompleto(Number(clienteId), new Date(fechaServicio), horaServicio, Number(coloracionId), formula, observaciones ?? 'Sin observaciones', Number(precio), fotos);
+    const mensaje = await ReportesService.createReporteCompleto(Number(clienteId), fechaServicio, horaServicio, Number(coloracionId), formula, observaciones ?? 'Sin observaciones', Number(precio), fotos);
+    res.status(mensaje.code).json(mensaje);
+}
+async function addFotosToReporte(req, res) {
+    const reporteId = (0, params_1.getParamInt)(req.params.id);
+    const fotos = req.files ?? [];
+    const mensaje = await ReportesService.addFotosToReporte(reporteId, fotos);
     res.status(mensaje.code).json(mensaje);
 }
 async function generarDocumento(req, res) {
