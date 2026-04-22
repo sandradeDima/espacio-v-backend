@@ -135,6 +135,8 @@ export async function updateReporte(
     id: number,
     clienteId: number,
     coloracionId: number,
+    fechaServicio: string | undefined,
+    horaServicio: string | undefined,
     formula: string,
     observaciones: string,
     precio: number
@@ -173,6 +175,8 @@ export async function updateReporte(
             id,
             clienteId,
             coloracion.id,
+            fechaServicio ?? existingReporte.fechaServicio,
+            horaServicio ?? existingReporte.horaServicio,
             formula,
             observaciones,
             precio

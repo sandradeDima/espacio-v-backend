@@ -69,8 +69,8 @@ async function createReporte(req, res) {
 }
 async function updateReporte(req, res) {
     const id = (0, params_1.getParamInt)(req.params.id);
-    const { clienteId, coloracion, formula, observaciones, precio, idReporte } = req.body;
-    const mensaje = await ReportesService.updateReporte(id, clienteId, coloracion, formula, observaciones, precio);
+    const { clienteId, coloracion, fechaServicio, horaServicio, formula, observaciones, precio } = req.body;
+    const mensaje = await ReportesService.updateReporte(id, clienteId, coloracion, fechaServicio, horaServicio, formula, observaciones, precio);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteReporte(req, res) {

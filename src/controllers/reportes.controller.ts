@@ -39,11 +39,13 @@ export async function createReporte(req: Request, res: Response) {
 
 export async function updateReporte(req: Request, res: Response) {
     const id = getParamInt(req.params.id);
-    const { clienteId, coloracion, formula, observaciones, precio,idReporte } = req.body;
+    const { clienteId, coloracion, fechaServicio, horaServicio, formula, observaciones, precio } = req.body;
     const mensaje = await ReportesService.updateReporte(
         id,
         clienteId,
         coloracion,
+        fechaServicio,
+        horaServicio,
         formula,
         observaciones,
         precio

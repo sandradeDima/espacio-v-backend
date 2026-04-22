@@ -15,6 +15,8 @@ exports.updateReporteSchema = zod_1.z.object({
     idReporte: zod_1.z.number().int().positive(),
     coloracion: zod_1.z.number().int().positive(),
     clienteId: zod_1.z.number().int().positive(),
+    fechaServicio: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida (formato YYYY-MM-DD)').optional(),
+    horaServicio: zod_1.z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/, 'Hora inválida (formato HH:MM o HH:MM:SS)').optional(),
     precio: zod_1.z.number().positive('El precio debe ser mayor a 0'),
     formula: zod_1.z.string().min(1, 'La fórmula es requerida').max(255),
     observaciones: zod_1.z.string().max(255).default('Sin observaciones'),

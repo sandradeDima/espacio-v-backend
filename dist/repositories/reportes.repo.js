@@ -12,6 +12,7 @@ async function findAll() {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -33,6 +34,7 @@ async function findById(id) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -54,6 +56,7 @@ async function findByCliente(clienteId) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -79,8 +82,8 @@ async function create(clienteId, fechaServicio, horaServicio, coloracionId, form
         throw new Error('Failed to create reporte');
     return reporte;
 }
-async function update(id, clienteId, coloracionId, formula, observaciones, precio) {
-    const [result] = await pool_1.pool.execute('UPDATE reportes SET cliente_id = ?, coloracion_id = ?, formula = ?, observaciones = ?, precio = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [clienteId, coloracionId, formula, observaciones, precio, id]);
+async function update(id, clienteId, coloracionId, fechaServicio, horaServicio, formula, observaciones, precio) {
+    const [result] = await pool_1.pool.execute('UPDATE reportes SET cliente_id = ?, coloracion_id = ?, fecha_servicio = ?, hora_servicio = ?, formula = ?, observaciones = ?, precio = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [clienteId, coloracionId, fechaServicio, horaServicio, formula, observaciones, precio, id]);
     if (result.affectedRows === 0)
         return null;
     return await findById(id);
@@ -93,6 +96,7 @@ async function findByDateRange(startDate, endDate) {
     const [rows] = await pool_1.pool.execute(`SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,

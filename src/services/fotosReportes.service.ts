@@ -1,6 +1,15 @@
+import fs from 'fs';
+import path from 'path';
 import * as FotosReportesRepo from '../repositories/fotosReportes.repo';
 import * as ReportesRepo from '../repositories/reportes.repo';
 import { MensajeApi } from '../types/MensajeApi';
+
+function removePhotoFile(filename: string) {
+    const imagePath = path.resolve(process.cwd(), 'uploads', 'images', filename);
+    if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+    }
+}
 
 export async function getAllFotosReportes(): Promise<MensajeApi> {
     try {
@@ -135,12 +144,24 @@ export async function updateFotoReporte(id: number, reporteId: number, filename:
 export async function deleteFotoReporte(id: number): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
+        const foto = await FotosReportesRepo.findById(id);
+        if (!foto) {
+            mensaje.code = 404;
+            mensaje.error = true;
+            mensaje.message = 'Foto no encontrada';
+            return mensaje;
+        }
         const deleted = await FotosReportesRepo.remove(id);
         if (!deleted) {
             mensaje.code = 404;
             mensaje.error = true;
             mensaje.message = 'Foto no encontrada';
             return mensaje;
+        }
+        try {
+            removePhotoFile(foto.filename);
+        } catch {
+            // Ignore filesystem cleanup issues after DB delete succeeds.
         }
         mensaje.code = 200;
         mensaje.error = false;
@@ -159,7 +180,15 @@ export async function deleteFotoReporte(id: number): Promise<MensajeApi> {
 export async function deleteFotosByReporte(reporteId: number): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
+        const fotos = await FotosReportesRepo.findByReporte(reporteId);
         const deletedCount = await FotosReportesRepo.removeByReporte(reporteId);
+        for (const foto of fotos) {
+            try {
+                removePhotoFile(foto.filename);
+            } catch {
+                // Ignore filesystem cleanup issues after DB delete succeeds.
+            }
+        }
         mensaje.code = 200;
         mensaje.error = false;
         mensaje.message = `${deletedCount} foto(s) eliminada(s) correctamente`;
@@ -174,4 +203,3 @@ export async function deleteFotosByReporte(reporteId: number): Promise<MensajeAp
         return mensaje;
     }
 }
-

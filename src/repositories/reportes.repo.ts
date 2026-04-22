@@ -4,6 +4,7 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2';
 export type Reporte = {
     id: number;
     clienteId: number;
+    coloracionId: number;
     fechaServicio: string;
     horaServicio: string;
     formula: string;
@@ -25,6 +26,7 @@ export async function findAll(): Promise<ReporteDetallado[]> {
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -49,6 +51,7 @@ export async function findById(id: number): Promise<ReporteDetallado | null> {
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -74,6 +77,7 @@ export async function findByCliente(clienteId: number): Promise<ReporteDetallado
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,
@@ -117,13 +121,15 @@ export async function update(
     id: number,
     clienteId: number,
     coloracionId: number,
+    fechaServicio: string,
+    horaServicio: string,
     formula: string,
     observaciones: string,
     precio: number
 ): Promise<ReporteDetallado | null> {
     const [result] = await pool.execute<ResultSetHeader>(
-        'UPDATE reportes SET cliente_id = ?, coloracion_id = ?, formula = ?, observaciones = ?, precio = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [clienteId, coloracionId, formula, observaciones, precio, id]
+        'UPDATE reportes SET cliente_id = ?, coloracion_id = ?, fecha_servicio = ?, hora_servicio = ?, formula = ?, observaciones = ?, precio = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [clienteId, coloracionId, fechaServicio, horaServicio, formula, observaciones, precio, id]
     );
     if (result.affectedRows === 0) return null;
     return await findById(id);
@@ -142,6 +148,7 @@ export async function findByDateRange(startDate: Date, endDate: Date): Promise<R
         `SELECT 
             r.id, 
             r.cliente_id as clienteId, 
+            r.coloracion_id as coloracionId,
             DATE_FORMAT(r.fecha_servicio, '%Y-%m-%d') as fechaServicio, 
             r.hora_servicio as horaServicio,
             r.formula,

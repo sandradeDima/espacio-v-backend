@@ -32,6 +32,9 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllFotosReportes = getAllFotosReportes;
 exports.getFotoReporteById = getFotoReporteById;
@@ -40,9 +43,17 @@ exports.createFotoReporte = createFotoReporte;
 exports.updateFotoReporte = updateFotoReporte;
 exports.deleteFotoReporte = deleteFotoReporte;
 exports.deleteFotosByReporte = deleteFotosByReporte;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const FotosReportesRepo = __importStar(require("../repositories/fotosReportes.repo"));
 const ReportesRepo = __importStar(require("../repositories/reportes.repo"));
 const MensajeApi_1 = require("../types/MensajeApi");
+function removePhotoFile(filename) {
+    const imagePath = path_1.default.resolve(process.cwd(), 'uploads', 'images', filename);
+    if (fs_1.default.existsSync(imagePath)) {
+        fs_1.default.unlinkSync(imagePath);
+    }
+}
 async function getAllFotosReportes() {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
@@ -171,12 +182,25 @@ async function updateFotoReporte(id, reporteId, filename) {
 async function deleteFotoReporte(id) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
+        const foto = await FotosReportesRepo.findById(id);
+        if (!foto) {
+            mensaje.code = 404;
+            mensaje.error = true;
+            mensaje.message = 'Foto no encontrada';
+            return mensaje;
+        }
         const deleted = await FotosReportesRepo.remove(id);
         if (!deleted) {
             mensaje.code = 404;
             mensaje.error = true;
             mensaje.message = 'Foto no encontrada';
             return mensaje;
+        }
+        try {
+            removePhotoFile(foto.filename);
+        }
+        catch {
+            // Ignore filesystem cleanup issues after DB delete succeeds.
         }
         mensaje.code = 200;
         mensaje.error = false;
@@ -195,7 +219,16 @@ async function deleteFotoReporte(id) {
 async function deleteFotosByReporte(reporteId) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
+        const fotos = await FotosReportesRepo.findByReporte(reporteId);
         const deletedCount = await FotosReportesRepo.removeByReporte(reporteId);
+        for (const foto of fotos) {
+            try {
+                removePhotoFile(foto.filename);
+            }
+            catch {
+                // Ignore filesystem cleanup issues after DB delete succeeds.
+            }
+        }
         mensaje.code = 200;
         mensaje.error = false;
         mensaje.message = `${deletedCount} foto(s) eliminada(s) correctamente`;

@@ -155,7 +155,7 @@ async function createReporte(clienteId, fechaServicio, horaServicio, coloracionI
         return mensaje;
     }
 }
-async function updateReporte(id, clienteId, coloracionId, formula, observaciones, precio) {
+async function updateReporte(id, clienteId, coloracionId, fechaServicio, horaServicio, formula, observaciones, precio) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
         // Validate reporte exists
@@ -182,7 +182,7 @@ async function updateReporte(id, clienteId, coloracionId, formula, observaciones
             mensaje.message = 'Coloración no encontrada';
             return mensaje;
         }
-        const reporte = await ReportesRepo.update(id, clienteId, coloracion.id, formula, observaciones, precio);
+        const reporte = await ReportesRepo.update(id, clienteId, coloracion.id, fechaServicio ?? existingReporte.fechaServicio, horaServicio ?? existingReporte.horaServicio, formula, observaciones, precio);
         mensaje.code = 200;
         mensaje.error = false;
         mensaje.message = 'Reporte actualizado correctamente';
