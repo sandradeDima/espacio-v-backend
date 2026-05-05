@@ -7,6 +7,12 @@ function normalizeOptionalEmail(email?: string | null): string | null {
     return normalized.length > 0 ? normalized : null;
 }
 
+function normalizeOptionalComentarios(comentarios?: string | null): string | null {
+    if (comentarios == null) return null;
+    const normalized = comentarios.trim();
+    return normalized.length > 0 ? normalized : null;
+}
+
 export async function getAllClientes(): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
@@ -51,11 +57,17 @@ export async function getClienteById(id: number): Promise<MensajeApi> {
     }
 }
 
-export async function createCliente(nombre: string, email?: string | null, telefono?: string): Promise<MensajeApi> {
+export async function createCliente(
+    nombre: string,
+    email?: string | null,
+    telefono?: string,
+    comentarios?: string | null
+): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
         const normalizedEmail = normalizeOptionalEmail(email);
         const normalizedTelefono = (telefono ?? '').trim();
+        const normalizedComentarios = normalizeOptionalComentarios(comentarios);
         
         if (normalizedEmail) {
             const existingCliente = await ClientesRepo.findByEmail(normalizedEmail);
@@ -67,7 +79,12 @@ export async function createCliente(nombre: string, email?: string | null, telef
             }
         }
         
-        const cliente = await ClientesRepo.create(nombre, normalizedEmail, normalizedTelefono);
+        const cliente = await ClientesRepo.create(
+            nombre,
+            normalizedEmail,
+            normalizedTelefono,
+            normalizedComentarios
+        );
         mensaje.code = 201;
         mensaje.error = false;
         mensaje.message = 'Cliente creado correctamente';
@@ -83,11 +100,18 @@ export async function createCliente(nombre: string, email?: string | null, telef
     }
 }
 
-export async function updateCliente(id: number, nombre: string, email?: string | null, telefono?: string): Promise<MensajeApi> {
+export async function updateCliente(
+    id: number,
+    nombre: string,
+    email?: string | null,
+    telefono?: string,
+    comentarios?: string | null
+): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
         const normalizedEmail = normalizeOptionalEmail(email);
         const normalizedTelefono = (telefono ?? '').trim();
+        const normalizedComentarios = normalizeOptionalComentarios(comentarios);
         
         // Check if cliente exists
         const existingCliente = await ClientesRepo.findById(id);
@@ -109,7 +133,13 @@ export async function updateCliente(id: number, nombre: string, email?: string |
             }
         }
         
-        const cliente = await ClientesRepo.update(id, nombre, normalizedEmail, normalizedTelefono);
+        const cliente = await ClientesRepo.update(
+            id,
+            nombre,
+            normalizedEmail,
+            normalizedTelefono,
+            normalizedComentarios
+        );
 
         
         mensaje.code = 200;

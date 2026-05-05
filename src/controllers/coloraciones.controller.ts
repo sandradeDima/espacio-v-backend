@@ -15,15 +15,15 @@ export async function getColoracionById(req: Request, res: Response) {
 }
 
 export async function createColoracion(req: Request, res: Response) {
-    const { nombre, descripcion } = req.body;
-    const mensaje = await ColoracionesService.createColoracion(nombre, descripcion);
+    const { nombre, descripcion, precio } = req.body;
+    const mensaje = await ColoracionesService.createColoracion(nombre, descripcion, precio);
     res.status(mensaje.code).json(mensaje);
 }
 
 export async function updateColoracion(req: Request, res: Response) {
     const id = getParamInt(req.params.id);
-    const { nombre, descripcion } = req.body;
-    const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion);
+    const { nombre, descripcion, precio } = req.body;
+    const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion, precio);
     res.status(mensaje.code).json(mensaje);
 }
 
@@ -40,4 +40,3 @@ export async function searchColoraciones(req: Request, res: Response) {
     const mensaje = await ColoracionesService.searchColoraciones(query);
     res.status(mensaje.code).json(mensaje);
 }
-

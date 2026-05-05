@@ -10,26 +10,26 @@ exports.search = search;
 exports.searchPagination = searchPagination;
 const pool_1 = require("../db/pool");
 async function findAll() {
-    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes ORDER BY created_at DESC');
+    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes ORDER BY created_at DESC');
     return rows;
 }
 async function findById(id) {
-    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE id = ?', [id]);
+    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE id = ?', [id]);
     return rows[0] ?? null;
 }
 async function findByEmail(email) {
-    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE email = ?', [email]);
+    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE email = ?', [email]);
     return rows[0] ?? null;
 }
-async function create(nombre, email, telefono) {
-    const [result] = await pool_1.pool.execute('INSERT INTO clientes (nombre, email, telefono) VALUES (?, ?, ?)', [nombre, email, telefono]);
+async function create(nombre, email, telefono, comentarios) {
+    const [result] = await pool_1.pool.execute('INSERT INTO clientes (nombre, email, telefono, comentarios) VALUES (?, ?, ?, ?)', [nombre, email, telefono, comentarios]);
     const cliente = await findById(result.insertId);
     if (!cliente)
         throw new Error('Failed to create cliente');
     return cliente;
 }
-async function update(id, nombre, email, telefono) {
-    const [result] = await pool_1.pool.execute('UPDATE clientes SET nombre = ?, email = ?, telefono = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [nombre, email, telefono, id]);
+async function update(id, nombre, email, telefono, comentarios) {
+    const [result] = await pool_1.pool.execute('UPDATE clientes SET nombre = ?, email = ?, telefono = ?, comentarios = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [nombre, email, telefono, comentarios, id]);
     if (result.affectedRows === 0)
         return null;
     return await findById(id);
@@ -40,7 +40,7 @@ async function remove(id) {
 }
 async function search(query) {
     const searchPattern = `%${query}%`;
-    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE nombre LIKE ? OR email LIKE ? OR telefono LIKE ? ORDER BY nombre', [searchPattern, searchPattern, searchPattern]);
+    const [rows] = await pool_1.pool.execute('SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE nombre LIKE ? OR email LIKE ? OR telefono LIKE ? OR comentarios LIKE ? ORDER BY nombre', [searchPattern, searchPattern, searchPattern, searchPattern]);
     return rows;
 }
 async function searchPagination(page, size, clientName, clientEmail, clientPhone, sortField, sortOrder) {
@@ -64,7 +64,7 @@ async function searchPagination(page, size, clientName, clientEmail, clientPhone
         clauses.push('telefono LIKE ?');
         params.push(`%${phone}%`);
     }
-    let baseQuery = 'SELECT id, nombre, email, telefono, created_at AS createdAt, updated_at AS updatedAt FROM clientes';
+    let baseQuery = 'SELECT id, nombre, email, telefono, comentarios, created_at AS createdAt, updated_at AS updatedAt FROM clientes';
     let countQuery = 'SELECT COUNT(*) AS total FROM clientes';
     if (clauses.length) {
         const whereClause = ' WHERE ' + clauses.join(' OR ');

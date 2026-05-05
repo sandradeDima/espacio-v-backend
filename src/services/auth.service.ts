@@ -206,4 +206,3 @@ export async function logoutAllSessions(userId: number): Promise<MensajeApi> {
         return mensaje;
     }
 }
-

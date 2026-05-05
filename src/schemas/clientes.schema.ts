@@ -8,7 +8,8 @@ export const createClienteSchema = z.object({
       .trim()
       .min(1, 'El teléfono es requerido')
       .max(255)
-      .regex(/^\d+$/, 'El teléfono solo debe contener números')
+      .regex(/^\d+$/, 'El teléfono solo debe contener números'),
+    comentarios: z.union([z.string().trim().max(500), z.literal(''), z.null()]).optional()
 });
 
 export const updateClienteSchema = z.object({
@@ -19,7 +20,8 @@ export const updateClienteSchema = z.object({
       .trim()
       .min(1, 'El teléfono es requerido')
       .max(255)
-      .regex(/^\d+$/, 'El teléfono solo debe contener números')
+      .regex(/^\d+$/, 'El teléfono solo debe contener números'),
+    comentarios: z.union([z.string().trim().max(500), z.literal(''), z.null()]).optional()
 });
 
 export type CreateClienteDTO = z.infer<typeof createClienteSchema>;

@@ -6,20 +6,21 @@ export type Cliente = {
     nombre: string;
     email: string | null;
     telefono: string;
+    comentarios: string | null;
     createdAt: Date;
     updatedAt: Date;
 }
 
 export async function findAll(): Promise<Cliente[]> {
     const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(
-        'SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes ORDER BY created_at DESC'
+        'SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes ORDER BY created_at DESC'
     );
     return rows;
 }
 
 export async function findById(id: number): Promise<Cliente | null> {
     const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(
-        'SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE id = ?',
+        'SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE id = ?',
         [id]
     );
     return rows[0] ?? null;
@@ -27,26 +28,37 @@ export async function findById(id: number): Promise<Cliente | null> {
 
 export async function findByEmail(email: string): Promise<Cliente | null> {
     const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(
-        'SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE email = ?',
+        'SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE email = ?',
         [email]
     );
     return rows[0] ?? null;
 }
 
-export async function create(nombre: string, email: string | null, telefono: string): Promise<Cliente> {
+export async function create(
+    nombre: string,
+    email: string | null,
+    telefono: string,
+    comentarios: string | null
+): Promise<Cliente> {
     const [result] = await pool.execute<ResultSetHeader>(
-        'INSERT INTO clientes (nombre, email, telefono) VALUES (?, ?, ?)',
-        [nombre, email, telefono]
+        'INSERT INTO clientes (nombre, email, telefono, comentarios) VALUES (?, ?, ?, ?)',
+        [nombre, email, telefono, comentarios]
     );
     const cliente = await findById(result.insertId);
     if (!cliente) throw new Error('Failed to create cliente');
     return cliente;
 }
 
-export async function update(id: number, nombre: string, email: string | null, telefono: string): Promise<Cliente | null> {
+export async function update(
+    id: number,
+    nombre: string,
+    email: string | null,
+    telefono: string,
+    comentarios: string | null
+): Promise<Cliente | null> {
     const [result] = await pool.execute<ResultSetHeader>(
-        'UPDATE clientes SET nombre = ?, email = ?, telefono = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [nombre, email, telefono, id]
+        'UPDATE clientes SET nombre = ?, email = ?, telefono = ?, comentarios = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [nombre, email, telefono, comentarios, id]
     );
     if (result.affectedRows === 0) return null;
     return await findById(id);
@@ -63,8 +75,8 @@ export async function remove(id: number): Promise<boolean> {
 export async function search(query: string): Promise<Cliente[]> {
     const searchPattern = `%${query}%`;
     const [rows] = await pool.execute<(Cliente & RowDataPacket)[]>(
-        'SELECT id, nombre, email, telefono, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE nombre LIKE ? OR email LIKE ? OR telefono LIKE ? ORDER BY nombre',
-        [searchPattern, searchPattern, searchPattern]
+        'SELECT id, nombre, email, telefono, comentarios, created_at as createdAt, updated_at as updatedAt FROM clientes WHERE nombre LIKE ? OR email LIKE ? OR telefono LIKE ? OR comentarios LIKE ? ORDER BY nombre',
+        [searchPattern, searchPattern, searchPattern, searchPattern]
     );
     return rows;
 }
@@ -102,7 +114,7 @@ export async function searchPagination(
   }
 
   let baseQuery =
-    'SELECT id, nombre, email, telefono, created_at AS createdAt, updated_at AS updatedAt FROM clientes';
+    'SELECT id, nombre, email, telefono, comentarios, created_at AS createdAt, updated_at AS updatedAt FROM clientes';
   let countQuery = 'SELECT COUNT(*) AS total FROM clientes';
 
   if (clauses.length) {

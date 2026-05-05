@@ -10,7 +10,8 @@ exports.createClienteSchema = zod_1.z.object({
         .trim()
         .min(1, 'El teléfono es requerido')
         .max(255)
-        .regex(/^\d+$/, 'El teléfono solo debe contener números')
+        .regex(/^\d+$/, 'El teléfono solo debe contener números'),
+    comentarios: zod_1.z.union([zod_1.z.string().trim().max(500), zod_1.z.literal(''), zod_1.z.null()]).optional()
 });
 exports.updateClienteSchema = zod_1.z.object({
     nombre: zod_1.z.string().trim().min(1, 'El nombre es requerido').max(255),
@@ -20,7 +21,8 @@ exports.updateClienteSchema = zod_1.z.object({
         .trim()
         .min(1, 'El teléfono es requerido')
         .max(255)
-        .regex(/^\d+$/, 'El teléfono solo debe contener números')
+        .regex(/^\d+$/, 'El teléfono solo debe contener números'),
+    comentarios: zod_1.z.union([zod_1.z.string().trim().max(500), zod_1.z.literal(''), zod_1.z.null()]).optional()
 });
 exports.buscadorClientesSchema = zod_1.z.object({
     page: zod_1.z.number().min(1, 'La página debe ser mayor o igual a 1'),

@@ -52,14 +52,14 @@ async function getClienteById(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function createCliente(req, res) {
-    const { nombre, email, telefono } = req.body;
-    const mensaje = await ClientesService.createCliente(nombre, email, telefono);
+    const { nombre, email, telefono, comentarios } = req.body;
+    const mensaje = await ClientesService.createCliente(nombre, email, telefono, comentarios);
     res.status(mensaje.code).json(mensaje);
 }
 async function updateCliente(req, res) {
     const id = (0, params_1.getParamInt)(req.params.id);
-    const { nombre, email, telefono } = req.body;
-    const mensaje = await ClientesService.updateCliente(id, nombre, email, telefono);
+    const { nombre, email, telefono, comentarios } = req.body;
+    const mensaje = await ClientesService.updateCliente(id, nombre, email, telefono, comentarios);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteCliente(req, res) {

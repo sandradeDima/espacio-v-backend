@@ -14,15 +14,15 @@ export async function getClienteById(req: Request, res: Response) {
 }
 
 export async function createCliente(req: Request, res: Response) {
-    const { nombre, email, telefono } = req.body;
-    const mensaje = await ClientesService.createCliente(nombre, email, telefono);
+    const { nombre, email, telefono, comentarios } = req.body;
+    const mensaje = await ClientesService.createCliente(nombre, email, telefono, comentarios);
     res.status(mensaje.code).json(mensaje);
 }
 
 export async function updateCliente(req: Request, res: Response) {
     const id = getParamInt(req.params.id);
-    const { nombre, email, telefono } = req.body;
-    const mensaje = await ClientesService.updateCliente(id, nombre, email, telefono);
+    const { nombre, email, telefono, comentarios } = req.body;
+    const mensaje = await ClientesService.updateCliente(id, nombre, email, telefono, comentarios);
     res.status(mensaje.code).json(mensaje);
 }
 

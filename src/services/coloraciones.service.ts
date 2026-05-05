@@ -1,6 +1,12 @@
 import * as ColoracionesRepo from '../repositories/coloraciones.repo';
 import { MensajeApi } from '../types/MensajeApi';
 
+function normalizeOptionalPrecio(precio?: number | string | null): number | null {
+    if (precio == null || precio === '') return null;
+    const parsed = typeof precio === 'number' ? precio : Number(precio);
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
 export async function getAllColoraciones(): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
@@ -45,10 +51,18 @@ export async function getColoracionById(id: number): Promise<MensajeApi> {
     }
 }
 
-export async function createColoracion(nombre: string, descripcion: string): Promise<MensajeApi> {
+export async function createColoracion(
+    nombre: string,
+    descripcion: string,
+    precio?: number | string | null
+): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
-        const coloracion = await ColoracionesRepo.create(nombre, descripcion);
+        const coloracion = await ColoracionesRepo.create(
+            nombre,
+            descripcion,
+            normalizeOptionalPrecio(precio)
+        );
         mensaje.code = 201;
         mensaje.error = false;
         mensaje.message = 'Coloración creada correctamente';
@@ -64,10 +78,20 @@ export async function createColoracion(nombre: string, descripcion: string): Pro
     }
 }
 
-export async function updateColoracion(id: number, nombre: string, descripcion: string): Promise<MensajeApi> {
+export async function updateColoracion(
+    id: number,
+    nombre: string,
+    descripcion: string,
+    precio?: number | string | null
+): Promise<MensajeApi> {
     try {
         const mensaje = new MensajeApi();
-        const coloracion = await ColoracionesRepo.update(id, nombre, descripcion);
+        const coloracion = await ColoracionesRepo.update(
+            id,
+            nombre,
+            descripcion,
+            normalizeOptionalPrecio(precio)
+        );
         if (!coloracion) {
             mensaje.code = 404;
             mensaje.error = true;
@@ -132,4 +156,3 @@ export async function searchColoraciones(query: string): Promise<MensajeApi> {
         return mensaje;
     }
 }
-

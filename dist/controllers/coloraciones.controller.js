@@ -52,14 +52,14 @@ async function getColoracionById(req, res) {
     res.status(mensaje.code).json(mensaje);
 }
 async function createColoracion(req, res) {
-    const { nombre, descripcion } = req.body;
-    const mensaje = await ColoracionesService.createColoracion(nombre, descripcion);
+    const { nombre, descripcion, precio } = req.body;
+    const mensaje = await ColoracionesService.createColoracion(nombre, descripcion, precio);
     res.status(mensaje.code).json(mensaje);
 }
 async function updateColoracion(req, res) {
     const id = (0, params_1.getParamInt)(req.params.id);
-    const { nombre, descripcion } = req.body;
-    const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion);
+    const { nombre, descripcion, precio } = req.body;
+    const mensaje = await ColoracionesService.updateColoracion(id, nombre, descripcion, precio);
     res.status(mensaje.code).json(mensaje);
 }
 async function deleteColoracion(req, res) {

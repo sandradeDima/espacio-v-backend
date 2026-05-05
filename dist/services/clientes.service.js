@@ -48,6 +48,12 @@ function normalizeOptionalEmail(email) {
     const normalized = email.trim();
     return normalized.length > 0 ? normalized : null;
 }
+function normalizeOptionalComentarios(comentarios) {
+    if (comentarios == null)
+        return null;
+    const normalized = comentarios.trim();
+    return normalized.length > 0 ? normalized : null;
+}
 async function getAllClientes() {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
@@ -92,11 +98,12 @@ async function getClienteById(id) {
         return mensaje;
     }
 }
-async function createCliente(nombre, email, telefono) {
+async function createCliente(nombre, email, telefono, comentarios) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
         const normalizedEmail = normalizeOptionalEmail(email);
         const normalizedTelefono = (telefono ?? '').trim();
+        const normalizedComentarios = normalizeOptionalComentarios(comentarios);
         if (normalizedEmail) {
             const existingCliente = await ClientesRepo.findByEmail(normalizedEmail);
             if (existingCliente) {
@@ -106,7 +113,7 @@ async function createCliente(nombre, email, telefono) {
                 return mensaje;
             }
         }
-        const cliente = await ClientesRepo.create(nombre, normalizedEmail, normalizedTelefono);
+        const cliente = await ClientesRepo.create(nombre, normalizedEmail, normalizedTelefono, normalizedComentarios);
         mensaje.code = 201;
         mensaje.error = false;
         mensaje.message = 'Cliente creado correctamente';
@@ -122,11 +129,12 @@ async function createCliente(nombre, email, telefono) {
         return mensaje;
     }
 }
-async function updateCliente(id, nombre, email, telefono) {
+async function updateCliente(id, nombre, email, telefono, comentarios) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
         const normalizedEmail = normalizeOptionalEmail(email);
         const normalizedTelefono = (telefono ?? '').trim();
+        const normalizedComentarios = normalizeOptionalComentarios(comentarios);
         // Check if cliente exists
         const existingCliente = await ClientesRepo.findById(id);
         if (!existingCliente) {
@@ -145,7 +153,7 @@ async function updateCliente(id, nombre, email, telefono) {
                 return mensaje;
             }
         }
-        const cliente = await ClientesRepo.update(id, nombre, normalizedEmail, normalizedTelefono);
+        const cliente = await ClientesRepo.update(id, nombre, normalizedEmail, normalizedTelefono, normalizedComentarios);
         mensaje.code = 200;
         mensaje.error = false;
         mensaje.message = 'Cliente actualizado correctamente';

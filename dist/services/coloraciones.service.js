@@ -41,6 +41,12 @@ exports.deleteColoracion = deleteColoracion;
 exports.searchColoraciones = searchColoraciones;
 const ColoracionesRepo = __importStar(require("../repositories/coloraciones.repo"));
 const MensajeApi_1 = require("../types/MensajeApi");
+function normalizeOptionalPrecio(precio) {
+    if (precio == null || precio === '')
+        return null;
+    const parsed = typeof precio === 'number' ? precio : Number(precio);
+    return Number.isFinite(parsed) ? parsed : null;
+}
 async function getAllColoraciones() {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
@@ -85,10 +91,10 @@ async function getColoracionById(id) {
         return mensaje;
     }
 }
-async function createColoracion(nombre, descripcion) {
+async function createColoracion(nombre, descripcion, precio) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
-        const coloracion = await ColoracionesRepo.create(nombre, descripcion);
+        const coloracion = await ColoracionesRepo.create(nombre, descripcion, normalizeOptionalPrecio(precio));
         mensaje.code = 201;
         mensaje.error = false;
         mensaje.message = 'Coloración creada correctamente';
@@ -104,10 +110,10 @@ async function createColoracion(nombre, descripcion) {
         return mensaje;
     }
 }
-async function updateColoracion(id, nombre, descripcion) {
+async function updateColoracion(id, nombre, descripcion, precio) {
     try {
         const mensaje = new MensajeApi_1.MensajeApi();
-        const coloracion = await ColoracionesRepo.update(id, nombre, descripcion);
+        const coloracion = await ColoracionesRepo.update(id, nombre, descripcion, normalizeOptionalPrecio(precio));
         if (!coloracion) {
             mensaje.code = 404;
             mensaje.error = true;
